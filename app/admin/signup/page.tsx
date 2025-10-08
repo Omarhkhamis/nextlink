@@ -6,36 +6,37 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lock } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-export default function AdminLogin() {
+export default function AdminSignup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: FormEvent) => {
+  const handleSignup = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signUpError) throw signUpError;
 
-      if (data.session) {
-        router.push('/admin/dashboard');
-        router.refresh();
-      }
+      setSuccess('Admin account created successfully! Redirecting to login...');
+      setTimeout(() => {
+        router.push('/admin');
+      }, 2000);
     } catch (err: any) {
-      setError(err.message || 'Invalid email or password');
-      setPassword('');
+      setError(err.message || 'Failed to create admin account');
     } finally {
       setLoading(false);
     }
@@ -46,15 +47,15 @@ export default function AdminLogin() {
       <Card className="w-full max-w-md bg-black/50 border-white/10 backdrop-blur-lg">
         <CardHeader className="space-y-3 text-center">
           <div className="mx-auto w-12 h-12 bg-brand-blue/20 rounded-full flex items-center justify-center">
-            <Lock className="h-6 w-6 text-brand-blue" />
+            <UserPlus className="h-6 w-6 text-brand-blue" />
           </div>
-          <CardTitle className="text-2xl text-white">Admin Login</CardTitle>
+          <CardTitle className="text-2xl text-white">Create Admin Account</CardTitle>
           <CardDescription className="text-gray-400">
-            Enter your password to access the dashboard
+            Set up your admin credentials
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-300">Email</Label>
               <Input
@@ -81,23 +82,36 @@ export default function AdminLogin() {
                   setPassword(e.target.value);
                   setError('');
                 }}
-                placeholder="Enter your password"
+                placeholder="Enter a strong password"
                 className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
                 required
+                minLength={6}
                 disabled={loading}
               />
-              {error && (
-                <p className="text-red-400 text-sm">{error}</p>
-              )}
             </div>
+            {error && (
+              <p className="text-red-400 text-sm">{error}</p>
+            )}
+            {success && (
+              <p className="text-green-400 text-sm">{success}</p>
+            )}
             <Button
               type="submit"
               disabled={loading}
               className="w-full bg-brand-blue hover:bg-brand-green text-black font-semibold disabled:opacity-50"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Creating Account...' : 'Create Admin Account'}
             </Button>
           </form>
+          <div className="mt-4 text-center">
+            <Button
+              variant="link"
+              onClick={() => router.push('/admin')}
+              className="text-gray-400 hover:text-brand-blue"
+            >
+              Already have an account? Login
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, FolderKanban, Briefcase, Users, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabase';
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -16,9 +17,14 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
-    router.push('/admin');
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/admin');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
