@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import ServicesTable from '@/components/admin/ServicesTable';
 import ServiceModal from '@/components/admin/ServiceModal';
+import { authenticatedFetch } from '@/lib/api-client';
 
 export interface Service {
   id: number;
@@ -37,9 +38,8 @@ export default function ServicesPage() {
   const handleSave = async (service: Omit<Service, 'id'>) => {
     try {
       if (editingService) {
-        const response = await fetch(`/api/services/${editingService.id}`, {
+        const response = await authenticatedFetch(`/api/services/${editingService.id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(service),
         });
         const result = await response.json();
@@ -47,9 +47,8 @@ export default function ServicesPage() {
           setServices(services.map(s => s.id === editingService.id ? result.data : s));
         }
       } else {
-        const response = await fetch('/api/services', {
+        const response = await authenticatedFetch('/api/services', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(service),
         });
         const result = await response.json();
@@ -71,7 +70,7 @@ export default function ServicesPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await fetch(`/api/services/${id}`, { method: 'DELETE' });
+      await authenticatedFetch(`/api/services/${id}`, { method: 'DELETE' });
       setServices(services.filter(s => s.id !== id));
     } catch (error) {
       console.error('Error deleting service:', error);

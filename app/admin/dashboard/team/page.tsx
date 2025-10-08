@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import TeamTable from '@/components/admin/TeamTable';
 import TeamModal from '@/components/admin/TeamModal';
+import { authenticatedFetch } from '@/lib/api-client';
 
 export interface TeamMember {
   id: number;
@@ -38,9 +39,8 @@ export default function TeamPage() {
   const handleSave = async (member: Omit<TeamMember, 'id'>) => {
     try {
       if (editingMember) {
-        const response = await fetch(`/api/team/${editingMember.id}`, {
+        const response = await authenticatedFetch(`/api/team/${editingMember.id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(member),
         });
         const result = await response.json();
@@ -48,9 +48,8 @@ export default function TeamPage() {
           setTeam(team.map(m => m.id === editingMember.id ? result.data : m));
         }
       } else {
-        const response = await fetch('/api/team', {
+        const response = await authenticatedFetch('/api/team', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(member),
         });
         const result = await response.json();
@@ -72,7 +71,7 @@ export default function TeamPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await fetch(`/api/team/${id}`, { method: 'DELETE' });
+      await authenticatedFetch(`/api/team/${id}`, { method: 'DELETE' });
       setTeam(team.filter(m => m.id !== id));
     } catch (error) {
       console.error('Error deleting team member:', error);

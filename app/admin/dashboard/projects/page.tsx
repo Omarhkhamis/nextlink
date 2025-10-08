@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import ProjectsTable from '@/components/admin/ProjectsTable';
 import ProjectModal from '@/components/admin/ProjectModal';
+import { authenticatedFetch } from '@/lib/api-client';
 
 export interface Project {
   id: number;
@@ -42,9 +43,8 @@ export default function ProjectsPage() {
   const handleSave = async (project: Omit<Project, 'id'>) => {
     try {
       if (editingProject) {
-        const response = await fetch(`/api/projects/${editingProject.id}`, {
+        const response = await authenticatedFetch(`/api/projects/${editingProject.id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(project),
         });
         const result = await response.json();
@@ -52,9 +52,8 @@ export default function ProjectsPage() {
           setProjects(projects.map(p => p.id === editingProject.id ? result.data : p));
         }
       } else {
-        const response = await fetch('/api/projects', {
+        const response = await authenticatedFetch('/api/projects', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(project),
         });
         const result = await response.json();
@@ -76,7 +75,7 @@ export default function ProjectsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+      await authenticatedFetch(`/api/projects/${id}`, { method: 'DELETE' });
       setProjects(projects.filter(p => p.id !== id));
     } catch (error) {
       console.error('Error deleting project:', error);
