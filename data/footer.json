@@ -1,0 +1,74 @@
+{
+  "logo": {
+    "text": "NextLink",
+    "highlight": "Link"
+  },
+  "description": "Transforming houses into intelligent homes with cutting-edge automation technology. Experience comfort, security, and efficiency like never before.",
+  "quickLinks": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "label": "Services",
+      "href": "/services"
+    },
+    {
+      "label": "Projects",
+      "href": "/projects"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact"
+    }
+  ],
+  "services": [
+    "Smart Lighting",
+    "HVAC Control",
+    "Security Systems",
+    "Home Cinema",
+    "Voice Integration"
+  ],
+  "contact": {
+    "email": "info@nextlink.com",
+    "phone": "+1 (555) 123-4567",
+    "address": "123 Smart Street, Tech City, TC 12345"
+  },
+  "social": [
+    {
+      "name": "Facebook",
+      "href": "#"
+    },
+    {
+      "name": "Twitter",
+      "href": "#"
+    },
+    {
+      "name": "Instagram",
+      "href": "#"
+    },
+    {
+      "name": "LinkedIn",
+      "href": "#"
+    }
+  ],
+  "legal": [
+    {
+      "label": "Privacy Policy",
+      "href": "#"
+    },
+    {
+      "label": "Terms of Service",
+      "href": "#"
+    },
+    {
+      "label": "Cookie Policy",
+      "href": "#"
+    }
+  ],
+  "copyright": "NextLink. All rights reserved."
+}

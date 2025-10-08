@@ -1,0 +1,97 @@
+{
+  "hero": {
+    "heading": "Get In Touch",
+    "subheading": "Have questions? We're here to help. Reach out to us and let's discuss how we can transform your home."
+  },
+  "form": {
+    "heading": "Send Us a Message",
+    "subheading": "Fill out the form below and our team will get back to you within 24 hours.",
+    "fields": [
+      {
+        "id": "name",
+        "label": "Full Name",
+        "type": "text",
+        "placeholder": "John Doe",
+        "required": true
+      },
+      {
+        "id": "email",
+        "label": "Email Address",
+        "type": "email",
+        "placeholder": "john@example.com",
+        "required": true
+      },
+      {
+        "id": "phone",
+        "label": "Phone Number",
+        "type": "tel",
+        "placeholder": "+1 (555) 123-4567",
+        "required": false
+      },
+      {
+        "id": "message",
+        "label": "Message",
+        "type": "textarea",
+        "placeholder": "Tell us about your project...",
+        "required": true,
+        "rows": 6
+      }
+    ],
+    "submitButton": "Send Message"
+  },
+  "contactInfo": {
+    "heading": "Contact Information",
+    "items": [
+      {
+        "icon": "Mail",
+        "title": "Email Us",
+        "content": "info@smarthome.com",
+        "link": "mailto:info@smarthome.com"
+      },
+      {
+        "icon": "Phone",
+        "title": "Call Us",
+        "content": "+1 (555) 123-4567",
+        "link": "tel:+15551234567"
+      },
+      {
+        "icon": "MapPin",
+        "title": "Visit Us",
+        "content": "123 Smart Street, Tech City, TC 12345",
+        "link": "#"
+      },
+      {
+        "icon": "Clock",
+        "title": "Business Hours",
+        "content": "Mon-Fri: 9AM-6PM, Sat: 10AM-4PM",
+        "link": "#"
+      }
+    ]
+  },
+  "quickConnect": {
+    "heading": "Quick Connect",
+    "subheading": "Get instant responses through our social channels",
+    "links": [
+      {
+        "name": "WhatsApp",
+        "href": "https://wa.me/15551234567",
+        "color": "text-green-400"
+      },
+      {
+        "name": "Telegram",
+        "href": "https://t.me/smarthome",
+        "color": "text-blue-400"
+      },
+      {
+        "name": "Email",
+        "href": "mailto:info@smarthome.com",
+        "color": "text-brand-blue"
+      }
+    ]
+  },
+  "map": {
+    "heading": "Our Location",
+    "subheading": "Visit our showroom to see smart home technology in action",
+    "address": "123 Smart Street, Tech City, TC 12345"
+  }
+}
