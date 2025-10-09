@@ -18,14 +18,14 @@ interface Project {
 }
 
 export default function ProjectDetailPage() {
-  const params = useParams<{ id: string }>(); // <-- حددنا نوع params
+  const params = useParams<{ id: string }>();
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProject = async () => {
-      if (!params?.id) return; // <-- حماية إذا params غير موجود
+      if (!params?.id) return;
       try {
         const response = await fetch(`/api/projects/${params.id}`);
         if (response.ok) {

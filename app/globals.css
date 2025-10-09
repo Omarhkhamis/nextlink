@@ -88,4 +88,7 @@ body {
   .bg-background {
     background-color: transparent !important;
   }
+  .hover\:text-accent-foreground:hover {
+    color: transparent !important;
+  }
 }
