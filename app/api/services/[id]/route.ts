@@ -1,26 +1,26 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase-server';
+import { query } from '@/lib/db';
 
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerClient(request);
     const body = await request.json();
     const { name, description, icon } = body;
 
-    const { data, error } = await supabase
-      .from('services')
-      .update({ name, description, icon })
-      .eq('id', params.id)
-      .select()
-      .single();
+    const result = await query(
+      'UPDATE services SET name = $1, description = $2, icon = $3 WHERE id = $4 RETURNING *',
+      [name, description, icon, params.id]
+    );
 
-    if (error) throw error;
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+    }
 
-    return NextResponse.json({ data }, { status: 200 });
+    return NextResponse.json({ data: result.rows[0] }, { status: 200 });
   } catch (error: any) {
+    console.error('Error updating service:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -30,16 +30,18 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerClient(request);
-    const { error } = await supabase
-      .from('services')
-      .delete()
-      .eq('id', params.id);
+    const result = await query(
+      'DELETE FROM services WHERE id = $1 RETURNING id',
+      [params.id]
+    );
 
-    if (error) throw error;
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
+    console.error('Error deleting service:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -1,26 +1,26 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase-server';
+import { query } from '@/lib/db';
 
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerClient(request);
     const body = await request.json();
     const { title, description, location, category, image } = body;
 
-    const { data, error } = await supabase
-      .from('projects')
-      .update({ title, description, location, category, image })
-      .eq('id', params.id)
-      .select()
-      .single();
+    const result = await query(
+      'UPDATE projects SET title = $1, description = $2, location = $3, category = $4, image = $5 WHERE id = $6 RETURNING *',
+      [title, description, location, category, image, params.id]
+    );
 
-    if (error) throw error;
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
 
-    return NextResponse.json({ data }, { status: 200 });
+    return NextResponse.json({ data: result.rows[0] }, { status: 200 });
   } catch (error: any) {
+    console.error('Error updating project:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -30,16 +30,18 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerClient(request);
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', params.id);
+    const result = await query(
+      'DELETE FROM projects WHERE id = $1 RETURNING id',
+      [params.id]
+    );
 
-    if (error) throw error;
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
+    console.error('Error deleting project:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

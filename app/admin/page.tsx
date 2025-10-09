@@ -2,12 +2,12 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lock } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -22,19 +22,21 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const result = await signIn('credentials', {
         email,
         password,
+        redirect: false,
       });
 
-      if (signInError) throw signInError;
-
-      if (data.session) {
+      if (result?.error) {
+        setError('Invalid email or password');
+        setPassword('');
+      } else if (result?.ok) {
         router.push('/admin/dashboard');
         router.refresh();
       }
     } catch (err: any) {
-      setError(err.message || 'Invalid email or password');
+      setError('An error occurred. Please try again.');
       setPassword('');
     } finally {
       setLoading(false);
@@ -50,7 +52,7 @@ export default function AdminLogin() {
           </div>
           <CardTitle className="text-2xl text-white">Admin Login</CardTitle>
           <CardDescription className="text-gray-400">
-            Enter your password to access the dashboard
+            Enter your credentials to access the dashboard
           </CardDescription>
         </CardHeader>
         <CardContent>

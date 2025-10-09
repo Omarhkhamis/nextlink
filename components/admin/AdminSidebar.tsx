@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import { LayoutDashboard, FolderKanban, Briefcase, Users, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -19,7 +19,7 @@ export default function AdminSidebar() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      await signOut({ redirect: false });
       router.push('/admin');
       router.refresh();
     } catch (error) {

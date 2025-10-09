@@ -1,38 +1,32 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase-server';
+import { query } from '@/lib/db';
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const supabase = createServerClient(request);
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const result = await query(
+      'SELECT * FROM projects ORDER BY created_at DESC'
+    );
 
-    if (error) throw error;
-
-    return NextResponse.json({ data }, { status: 200 });
+    return NextResponse.json({ data: result.rows }, { status: 200 });
   } catch (error: any) {
+    console.error('Error fetching projects:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const supabase = createServerClient(request);
     const body = await request.json();
     const { title, description, location, category, image } = body;
 
-    const { data, error } = await supabase
-      .from('projects')
-      .insert([{ title, description, location, category, image }])
-      .select()
-      .single();
+    const result = await query(
+      'INSERT INTO projects (title, description, location, category, image, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *',
+      [title, description, location, category, image]
+    );
 
-    if (error) throw error;
-
-    return NextResponse.json({ data }, { status: 201 });
+    return NextResponse.json({ data: result.rows[0] }, { status: 201 });
   } catch (error: any) {
+    console.error('Error creating project:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
