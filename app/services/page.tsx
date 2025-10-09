@@ -52,7 +52,7 @@ export default function Services() {
               Our <span className="text-brand-blue">Services</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Comprehensive smart home solutions designed to elevate your lifestyle, security, and comfort
+              Comprehensive NextLink solutions designed to elevate your lifestyle, security, and comfort
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function Services() {
               Our <span className="text-brand-green">Solutions</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Professional smart home services tailored to your needs
+              Professional NextLink services tailored to your needs
             </p>
           </div>
 
@@ -100,7 +100,7 @@ export default function Services() {
               Ready to Get Started?
             </h2>
             <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Schedule a free consultation with our experts to discuss your smart home needs
+              Schedule a free consultation with our experts to discuss your NextLink needs
               and receive a customized solution plan.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

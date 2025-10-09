@@ -1,14 +1,64 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Home, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Home, Mail, Phone, MapPin } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import footerData from '@/data/footer.json';
 
+interface Settings {
+  contact_email: string | null;
+  contact_phone: string | null;
+  contact_address: string | null;
+}
+
+interface SocialMedia {
+  id: number;
+  platform: string;
+  icon_name: string;
+  url: string;
+  display_order: number;
+}
+
 export default function Footer() {
-  const socialIcons = {
-    Facebook,
-    Twitter,
-    Instagram,
-    LinkedIn: Linkedin,
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([]);
+
+  useEffect(() => {
+    fetchSettings();
+    fetchSocialMedia();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      const result = await response.json();
+      if (result.data) {
+        setSettings(result.data);
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
   };
+
+  const fetchSocialMedia = async () => {
+    try {
+      const response = await fetch('/api/social-media');
+      const result = await response.json();
+      setSocialMedia(result.data || []);
+    } catch (error) {
+      console.error('Error fetching social media:', error);
+    }
+  };
+
+  const getIcon = (iconName: string) => {
+    const IconComponent = (Icons as any)[iconName.charAt(0).toUpperCase() + iconName.slice(1).replace(/-./g, x => x[1].toUpperCase())];
+    return IconComponent || Icons.Globe;
+  };
+
+  const contactEmail = settings?.contact_email || footerData.contact.email;
+  const contactPhone = settings?.contact_phone || footerData.contact.phone;
+  const contactAddress = settings?.contact_address || footerData.contact.address;
 
   return (
     <footer className="bg-black border-t border-white/10">
@@ -57,35 +107,45 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-3">
-              <li className="flex items-start space-x-3 text-gray-400 text-sm">
-                <Mail className="h-5 w-5 text-brand-blue mt-0.5 flex-shrink-0" />
-                <span>{footerData.contact.email}</span>
-              </li>
-              <li className="flex items-start space-x-3 text-gray-400 text-sm">
-                <Phone className="h-5 w-5 text-brand-blue mt-0.5 flex-shrink-0" />
-                <span>{footerData.contact.phone}</span>
-              </li>
-              <li className="flex items-start space-x-3 text-gray-400 text-sm">
-                <MapPin className="h-5 w-5 text-brand-blue mt-0.5 flex-shrink-0" />
-                <span>{footerData.contact.address}</span>
-              </li>
+              {contactEmail && (
+                <li className="flex items-start space-x-3 text-gray-400 text-sm">
+                  <Mail className="h-5 w-5 text-brand-blue mt-0.5 flex-shrink-0" />
+                  <span>{contactEmail}</span>
+                </li>
+              )}
+              {contactPhone && (
+                <li className="flex items-start space-x-3 text-gray-400 text-sm">
+                  <Phone className="h-5 w-5 text-brand-blue mt-0.5 flex-shrink-0" />
+                  <span>{contactPhone}</span>
+                </li>
+              )}
+              {contactAddress && (
+                <li className="flex items-start space-x-3 text-gray-400 text-sm">
+                  <MapPin className="h-5 w-5 text-brand-blue mt-0.5 flex-shrink-0" />
+                  <span>{contactAddress}</span>
+                </li>
+              )}
             </ul>
 
-            <div className="flex space-x-4 mt-6">
-              {footerData.social.map((item) => {
-                const Icon = socialIcons[item.name as keyof typeof socialIcons];
-                return (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="text-gray-400 hover:text-brand-blue transition-colors"
-                    aria-label={item.name}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </a>
-                );
-              })}
-            </div>
+            {socialMedia.length > 0 && (
+              <div className="flex space-x-4 mt-6">
+                {socialMedia.map((social) => {
+                  const Icon = getIcon(social.icon_name);
+                  return (
+                    <a
+                      key={social.id}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-brand-blue transition-colors"
+                      aria-label={social.platform}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 

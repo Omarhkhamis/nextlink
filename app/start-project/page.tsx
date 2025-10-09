@@ -109,7 +109,7 @@ export default function StartProject() {
                 <CardHeader>
                   <CardTitle className="text-2xl text-white">Project Details</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Fill out the form below to get started with your smart home project
+                    Fill out the form below to get started with your NextLink project
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -336,7 +336,7 @@ export default function StartProject() {
                       4
                     </div>
                     <p className="text-gray-300 text-sm">
-                      Begin your smart home transformation
+                      Begin your NextLink transformation
                     </p>
                   </div>
                 </CardContent>
@@ -355,7 +355,7 @@ export default function StartProject() {
                       <span className="text-brand-blue font-semibold">Phone:</span> +1 (555) 123-4567
                     </p>
                     <p className="text-gray-300">
-                      <span className="text-brand-blue font-semibold">Email:</span> info@smarthome.com
+                      <span className="text-brand-blue font-semibold">Email:</span> info@nextlinkuae.com
                     </p>
                   </div>
                   <Button

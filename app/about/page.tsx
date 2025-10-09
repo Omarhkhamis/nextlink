@@ -40,7 +40,7 @@ export default function About() {
       icon: Target,
       title: 'Mission',
       description:
-        'To revolutionize modern living by making smart home technology accessible, reliable, and intuitive for everyone.',
+        'To revolutionize modern living by making NextLink technology accessible, reliable, and intuitive for everyone.',
     },
     {
       icon: Eye,
@@ -71,7 +71,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center animate-fade-in">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6">
-              About <span className="text-brand-blue">SmartHome</span>
+              About <span className="text-brand-blue">NextLink</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               We're passionate about transforming houses into intelligent living spaces that enhance
@@ -90,7 +90,7 @@ export default function About() {
               </h2>
               <div className="space-y-4 text-gray-300 leading-relaxed">
                 <p>
-                  Founded in 2014, SmartHome began with a simple vision: to make advanced home
+                  Founded in 2014, NextLink began with a simple vision: to make advanced home
                   automation technology accessible to everyone. What started as a small team of
                   passionate engineers has grown into a leading provider of intelligent home solutions.
                 </p>
@@ -149,7 +149,7 @@ export default function About() {
               Meet Our <span className="text-brand-blue">Team</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Experienced professionals dedicated to bringing your smart home vision to life
+              Experienced professionals dedicated to bringing your NextLink vision to life
             </p>
           </div>
 

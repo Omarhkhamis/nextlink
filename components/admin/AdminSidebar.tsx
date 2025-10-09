@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
-import { LayoutDashboard, FolderKanban, Briefcase, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Briefcase, Users, FileText, Settings, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
@@ -11,6 +11,8 @@ const navItems = [
   { href: '/admin/dashboard/projects', label: 'Projects', icon: FolderKanban },
   { href: '/admin/dashboard/services', label: 'Services', icon: Briefcase },
   { href: '/admin/dashboard/team', label: 'Team', icon: Users },
+  { href: '/admin/dashboard/pages', label: 'Pages', icon: FileText },
+  { href: '/admin/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function AdminSidebar() {

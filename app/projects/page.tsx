@@ -54,7 +54,7 @@ export default function Projects() {
               Our <span className="text-brand-blue">Projects</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Explore our portfolio of successful smart home installations across residential, commercial,
+              Explore our portfolio of successful NextLink installations across residential, commercial,
               and luxury properties
             </p>
           </div>
@@ -83,11 +83,11 @@ export default function Projects() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProjects.map((project, index) => (
               <div
-                key={index}
+                key={project.id}
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <ProjectCard {...project} />
+                <ProjectCard {...project} href={`/projects/${project.id}`} />
               </div>
             ))}
           </div>
@@ -107,7 +107,7 @@ export default function Projects() {
               Want a Similar Project?
             </h2>
             <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Every home is unique. Let us create a custom smart home solution tailored to your specific
+              Every home is unique. Let us create a custom NextLink solution tailored to your specific
               needs and preferences.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

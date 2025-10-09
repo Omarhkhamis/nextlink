@@ -62,7 +62,7 @@ export default function Home() {
               Our <span className="text-brand-blue">Services</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Comprehensive smart home solutions tailored to your needs
+              Comprehensive NextLink solutions tailored to your needs
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-slide-in-left">
               <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-                Why Choose <span className="text-brand-green">SmartHome</span>?
+                Why Choose <span className="text-brand-green">NextLink</span>?
               </h2>
               <p className="text-gray-400 text-lg mb-8 leading-relaxed">
                 We transform ordinary houses into intelligent homes that anticipate your needs,
@@ -124,7 +124,7 @@ export default function Home() {
                 <div className="relative h-[500px]">
                   <Image
                     src="https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                    alt="Modern smart home interior"
+                    alt="Modern NextLink interior"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />

@@ -22,7 +22,7 @@
   ],
   "form": {
     "heading": "Project Details",
-    "subheading": "Fill out the form below to get started with your smart home project",
+    "subheading": "Fill out the form below to get started with your NextLink project",
     "fields": [
       {
         "id": "name",
@@ -116,14 +116,14 @@
       "We'll review your request within 24 hours",
       "Schedule a free consultation call",
       "Receive a customized proposal and quote",
-      "Begin your smart home transformation"
+      "Begin your NextLink transformation"
     ]
   },
   "helpSection": {
     "heading": "Need Help?",
     "content": "Our team is here to assist you with any questions about your project.",
     "phone": "+1 (555) 123-4567",
-    "email": "info@smarthome.com",
+    "email": "info@nextlinkuae.com",
     "button": "Schedule Consultation"
   }
 }

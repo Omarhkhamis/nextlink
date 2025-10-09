@@ -45,8 +45,8 @@
       {
         "icon": "Mail",
         "title": "Email Us",
-        "content": "info@smarthome.com",
-        "link": "mailto:info@smarthome.com"
+        "content": "info@nextlinkuae.com",
+        "link": "mailto:info@nextlinkuae.com"
       },
       {
         "icon": "Phone",
@@ -79,19 +79,19 @@
       },
       {
         "name": "Telegram",
-        "href": "https://t.me/smarthome",
+        "href": "https://t.me/nextlink",
         "color": "text-blue-400"
       },
       {
         "name": "Email",
-        "href": "mailto:info@smarthome.com",
+        "href": "mailto:info@nextlinkuae.com",
         "color": "text-brand-blue"
       }
     ]
   },
   "map": {
     "heading": "Our Location",
-    "subheading": "Visit our showroom to see smart home technology in action",
+    "subheading": "Visit our showroom to see NextLink technology in action",
     "address": "123 Smart Street, Tech City, TC 12345"
   }
 }

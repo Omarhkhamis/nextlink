@@ -4,20 +4,79 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Phone, MapPin, Clock, MessageSquare, Send } from 'lucide-react';
-import { useState } from 'react';
+import { Mail, Phone, MapPin, Clock, MessageSquare, Send, CheckCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    subject: '',
     message: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [contactInfo, setContactInfo] = useState({
+    email: 'info@nextlinkuae.com',
+    phone: '+971 50 123 4567',
+    address: 'Dubai, UAE',
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings');
+        const result = await response.json();
+        if (result.data) {
+          setContactInfo({
+            email: result.data.contact_email || 'info@nextlinkuae.com',
+            phone: result.data.contact_phone || '+971 50 123 4567',
+            address: result.data.contact_address || 'Dubai, UAE',
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setLoading(true);
+    setError('');
+    setSuccess(false);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSuccess(true);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+        });
+        setTimeout(() => setSuccess(false), 5000);
+      } else {
+        setError(result.error || 'Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      setError('Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -27,37 +86,31 @@ export default function Contact() {
     });
   };
 
-  const contactInfo = [
+  const contactDetails = [
     {
       icon: Mail,
       title: 'Email Us',
-      content: 'info@smarthome.com',
-      link: 'mailto:info@smarthome.com',
+      content: contactInfo.email,
+      link: `mailto:${contactInfo.email}`,
     },
     {
       icon: Phone,
       title: 'Call Us',
-      content: '+1 (555) 123-4567',
-      link: 'tel:+15551234567',
+      content: contactInfo.phone,
+      link: `tel:${contactInfo.phone.replace(/\s/g, '')}`,
     },
     {
       icon: MapPin,
       title: 'Visit Us',
-      content: '123 Smart Street, Tech City, TC 12345',
+      content: contactInfo.address,
       link: '#',
     },
     {
       icon: Clock,
       title: 'Business Hours',
-      content: 'Mon-Fri: 9AM-6PM, Sat: 10AM-4PM',
+      content: 'Sun-Thu: 9AM-6PM',
       link: '#',
     },
-  ];
-
-  const socialLinks = [
-    { name: 'WhatsApp', link: 'https://wa.me/15551234567', color: 'text-green-400' },
-    { name: 'Telegram', link: 'https://t.me/smarthome', color: 'text-blue-400' },
-    { name: 'Email', link: 'mailto:info@smarthome.com', color: 'text-brand-blue' },
   ];
 
   return (
@@ -89,6 +142,21 @@ export default function Contact() {
                 Fill out the form below and our team will get back to you within 24 hours.
               </p>
 
+              {success && (
+                <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-400" />
+                  <p className="text-green-400">
+                    Your message has been sent successfully! We'll get back to you soon.
+                  </p>
+                </div>
+              )}
+
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400">{error}</p>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
@@ -103,6 +171,7 @@ export default function Contact() {
                     onChange={handleChange}
                     placeholder="John Doe"
                     className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue"
+                    disabled={loading}
                   />
                 </div>
 
@@ -119,6 +188,7 @@ export default function Contact() {
                     onChange={handleChange}
                     placeholder="john@example.com"
                     className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue"
+                    disabled={loading}
                   />
                 </div>
 
@@ -132,8 +202,25 @@ export default function Contact() {
                     type="tel"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+971 50 123 4567"
                     className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue"
+                    disabled={loading}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
+                    Subject
+                  </label>
+                  <Input
+                    id="subject"
+                    name="subject"
+                    type="text"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    placeholder="How can we help you?"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue"
+                    disabled={loading}
                   />
                 </div>
 
@@ -150,15 +237,17 @@ export default function Contact() {
                     placeholder="Tell us about your project..."
                     rows={6}
                     className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue resize-none"
+                    disabled={loading}
                   />
                 </div>
 
                 <Button
                   type="submit"
                   size="lg"
+                  disabled={loading}
                   className="w-full bg-brand-blue hover:bg-brand-green text-black font-semibold group"
                 >
-                  Send Message
+                  {loading ? 'Sending...' : 'Send Message'}
                   <Send className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </form>
@@ -170,7 +259,7 @@ export default function Contact() {
               </h2>
 
               <div className="grid grid-cols-1 gap-6">
-                {contactInfo.map((info, index) => (
+                {contactDetails.map((info, index) => (
                   <Card
                     key={index}
                     className="bg-white/5 backdrop-blur-lg border-white/10 hover:border-brand-blue/50 transition-all hover:shadow-xl hover:shadow-brand-blue/20"
@@ -203,26 +292,22 @@ export default function Contact() {
                 <CardHeader>
                   <CardTitle className="text-xl text-white flex items-center">
                     <MessageSquare className="mr-2 h-5 w-5 text-brand-green" />
-                    Quick Connect
+                    Need Immediate Assistance?
                   </CardTitle>
                   <CardDescription className="text-gray-400">
-                    Get instant responses through our social channels
+                    Our team is ready to help you with any questions or concerns
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-4">
-                    {socialLinks.map((social, index) => (
-                      <a
-                        key={index}
-                        href={social.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`flex-1 min-w-[120px] px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-center font-semibold transition-all hover:border-brand-blue hover:shadow-lg hover:shadow-brand-blue/20 ${social.color}`}
-                      >
-                        {social.name}
-                      </a>
-                    ))}
-                  </div>
+                  <p className="text-gray-300 mb-4">
+                    For urgent matters, please call us directly at{' '}
+                    <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="text-brand-blue hover:text-brand-green transition-colors font-semibold">
+                      {contactInfo.phone}
+                    </a>
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    We typically respond to all inquiries within 24 hours during business days.
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -233,16 +318,16 @@ export default function Contact() {
               <CardHeader>
                 <CardTitle className="text-2xl text-white">Our Location</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Visit our showroom to see smart home technology in action
+                  Visit our showroom to see NextLink technology in action
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="h-96 bg-gradient-to-br from-brand-blue/20 to-brand-green/20 flex items-center justify-center">
                   <div className="text-center">
                     <MapPin className="h-16 w-16 text-brand-blue mx-auto mb-4" />
-                    <p className="text-gray-300 text-lg">Interactive Map Placeholder</p>
+                    <p className="text-gray-300 text-lg font-semibold">NextLink UAE</p>
                     <p className="text-gray-400 text-sm mt-2">
-                      123 Smart Street, Tech City, TC 12345
+                      {contactInfo.address}
                     </p>
                   </div>
                 </div>
