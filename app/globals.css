@@ -21,7 +21,6 @@ body {
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
@@ -79,5 +78,14 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .bg-card {
+    background-color: transparent !important;
+  }
+  .bg-background {
+    background-color: transparent !important;
   }
 }
