@@ -23,58 +23,45 @@ export default function Projects() {
   const categories = ["all", "residential", "commercial", "luxury"];
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProject = async () => {
       try {
-        const response = await fetch("/api/projects");
-        const result = await response.json();
-
-        if (result.data && result.data.length > 0) {
-          setProjects(result.data);
-        } else {
-          // إذا البيانات فاضية، نضيف بيانات وهمية مؤقتة
-          setProjects([
-            {
-              id: 1,
-              title: "Placeholder Project 1",
-              description:
-                "This is placeholder content. Add real projects from the dashboard.",
-              location: "Unknown",
-              category: "residential",
-              image: "/placeholder-image.jpg",
-            },
-            {
-              id: 2,
-              title: "Placeholder Project 2",
-              description:
-                "This is placeholder content. Add real projects from the dashboard.",
-              location: "Unknown",
-              category: "commercial",
-              image: "/placeholder-image.jpg",
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-
-        // عند حدوث خطأ (مثلاً قاعدة البيانات فارغة أو API لا يعمل)، نضيف بيانات وهمية
-        setProjects([
-          {
-            id: 1,
-            title: "Placeholder Project 1",
+        // تحقق إذا params موجودة
+        if (!params || !params.id) {
+          console.warn("Project ID is missing! Using placeholder data.");
+          setProject({
+            id: 0,
+            title: "Placeholder Project",
             description:
               "This is placeholder content. Add real projects from the dashboard.",
             location: "Unknown",
             category: "residential",
             image: "/placeholder-image.jpg",
-          },
-        ]);
-      } finally {
-        setLoading(false);
+          });
+          return;
+        }
+
+        const response = await fetch(`/api/projects/${params.id}`);
+        if (response.ok) {
+          const result = await response.json();
+          setProject(result.data);
+        }
+      } catch (error) {
+        console.error(error);
+        // في حالة حدوث خطأ
+        setProject({
+          id: 0,
+          title: "Placeholder Project",
+          description:
+            "This is placeholder content. Add real projects from the dashboard.",
+          location: "Unknown",
+          category: "residential",
+          image: "/placeholder-image.jpg",
+        });
       }
     };
 
-    fetchProjects();
-  }, []);
+    fetchProject();
+  }, [params]);
 
   const filteredProjects =
     filter === "all" ? projects : projects.filter((p) => p.category === filter);
