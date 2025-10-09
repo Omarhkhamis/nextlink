@@ -11,7 +11,7 @@
         "id": "name",
         "label": "Full Name",
         "type": "text",
-        "placeholder": "Your Name",
+        "placeholder": "Your name",
         "required": true
       },
       {
@@ -25,7 +25,8 @@
         "id": "phone",
         "label": "Phone Number",
         "type": "tel",
-        "required": true
+        "placeholder": "+1 (555) 123-4567",
+        "required": false
       },
       {
         "id": "message",
