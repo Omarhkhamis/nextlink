@@ -13,7 +13,7 @@ interface Project {
   long_description: string;
   location: string;
   category: string;
-  image_url: string;
+  image: string;
   created_at: string;
 }
 
@@ -61,9 +61,9 @@ export default function ProjectDetailPage() {
   return (
     <div className="min-h-screen bg-black">
       <div className="relative h-[500px] w-full overflow-hidden">
-        {project.image_url ? (
+        {project.image ? (
           <img
-            src={project.image_url}
+            src={project.image}
             alt={project.title}
             className="w-full h-full object-cover"
           />

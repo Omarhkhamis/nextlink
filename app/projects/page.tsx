@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import ProjectCard from "@/components/sections/ProjectCard";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { ArrowRight } from "lucide-react";
+import ProjectCard from '@/components/sections/ProjectCard';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 interface Project {
   id: number;
@@ -16,55 +16,32 @@ interface Project {
 }
 
 export default function Projects() {
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState('all');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const categories = ["all", "residential", "commercial", "luxury"];
+  const categories = ['all', 'residential', 'commercial', 'luxury'];
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const fetchProjects = async () => {
       try {
-        // تحقق إذا params موجودة
-        if (!params || !params.id) {
-          console.warn("Project ID is missing! Using placeholder data.");
-          setProject({
-            id: 0,
-            title: "Placeholder Project",
-            description:
-              "This is placeholder content. Add real projects from the dashboard.",
-            location: "Unknown",
-            category: "residential",
-            image: "/placeholder-image.jpg",
-          });
-          return;
-        }
-
-        const response = await fetch(`/api/projects/${params.id}`);
-        if (response.ok) {
-          const result = await response.json();
-          setProject(result.data);
+        const response = await fetch('/api/projects');
+        const result = await response.json();
+        if (result.data) {
+          setProjects(result.data);
         }
       } catch (error) {
-        console.error(error);
-        // في حالة حدوث خطأ
-        setProject({
-          id: 0,
-          title: "Placeholder Project",
-          description:
-            "This is placeholder content. Add real projects from the dashboard.",
-          location: "Unknown",
-          category: "residential",
-          image: "/placeholder-image.jpg",
-        });
+        console.error('Error fetching projects:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProject();
-  }, [params]);
+    fetchProjects();
+  }, []);
 
   const filteredProjects =
-    filter === "all" ? projects : projects.filter((p) => p.category === filter);
+    filter === 'all' ? projects : projects.filter((p) => p.category === filter);
 
   return (
     <main className="pt-20">
@@ -77,8 +54,8 @@ export default function Projects() {
               Our <span className="text-brand-blue">Projects</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Explore our portfolio of successful NextLink installations across
-              residential, commercial, and luxury properties
+              Explore our portfolio of successful NextLink installations across residential, commercial,
+              and luxury properties
             </p>
           </div>
         </div>
@@ -91,11 +68,11 @@ export default function Projects() {
               <Button
                 key={category}
                 onClick={() => setFilter(category)}
-                variant={filter === category ? "default" : "outline"}
+                variant={filter === category ? 'default' : 'outline'}
                 className={
                   filter === category
-                    ? "bg-brand-blue hover:bg-brand-green text-black font-semibold"
-                    : "border-white/20 text-gray-300 hover:border-brand-blue hover:text-brand-blue hover:bg-white/5"
+                    ? 'bg-brand-blue hover:bg-brand-green text-black font-semibold'
+                    : 'border-white/20 text-gray-300 hover:border-brand-blue hover:text-brand-blue hover:bg-white/5'
                 }
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -117,9 +94,7 @@ export default function Projects() {
 
           {filteredProjects.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-gray-400 text-lg">
-                No projects found in this category.
-              </p>
+              <p className="text-gray-400 text-lg">No projects found in this category.</p>
             </div>
           )}
         </div>
@@ -132,8 +107,8 @@ export default function Projects() {
               Want a Similar Project?
             </h2>
             <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Every home is unique. Let us create a custom NextLink solution
-              tailored to your specific needs and preferences.
+              Every home is unique. Let us create a custom NextLink solution tailored to your specific
+              needs and preferences.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/start-project">
