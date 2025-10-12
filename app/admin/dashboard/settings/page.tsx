@@ -44,17 +44,18 @@ export default function SettingsPage() {
     contact_phone: null,
     contact_address: null,
   });
+
   const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSocial, setEditingSocial] = useState<SocialMedia | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
-  // For admin credentials
+  // Admin credentials
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
-  const [adminMessage, setAdminMessage] = useState("");
   const [adminSaving, setAdminSaving] = useState(false);
+  const [adminMessage, setAdminMessage] = useState("");
 
   useEffect(() => {
     fetchSettings();
@@ -128,7 +129,8 @@ export default function SettingsPage() {
         setAdminPassword("");
         setTimeout(() => setAdminMessage(""), 3000);
       } else {
-        setAdminMessage("Failed to update admin credentials");
+        const data = await response.json();
+        setAdminMessage(data.error || "Failed to update admin credentials");
       }
     } catch (error) {
       setAdminMessage("Error updating admin credentials");
@@ -451,23 +453,23 @@ export default function SettingsPage() {
               />
             </div>
           </CardContent>
-        </Card>
 
-        {adminMessage && (
-          <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-            <p className="text-green-400">{adminMessage}</p>
+          {adminMessage && (
+            <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg m-4">
+              <p className="text-green-400">{adminMessage}</p>
+            </div>
+          )}
+
+          <div className="flex justify-end m-4">
+            <Button
+              type="submit"
+              disabled={adminSaving}
+              className="bg-brand-blue hover:bg-brand-green text-black font-semibold"
+            >
+              {adminSaving ? "Saving..." : "Update Admin"}
+            </Button>
           </div>
-        )}
-
-        <div className="flex justify-end">
-          <Button
-            type="submit"
-            disabled={adminSaving}
-            className="bg-brand-blue hover:bg-brand-green text-black font-semibold"
-          >
-            {adminSaving ? "Saving..." : "Update Admin"}
-          </Button>
-        </div>
+        </Card>
       </form>
     </div>
   );
