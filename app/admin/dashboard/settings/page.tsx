@@ -84,7 +84,7 @@ export default function SettingsPage() {
 
   const fetchAdmin = async () => {
     try {
-      const response = await fetch("/api/admin");
+      const response = await fetch("/api/admin/update"); // صححت الرابط
       const result = await response.json();
       if (result.data) setAdminEmail(result.data.email);
     } catch (error) {
