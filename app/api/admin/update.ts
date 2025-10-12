@@ -1,10 +1,13 @@
-// /pages/api/admin/update.js
+// app/api/admin/update.ts
+import { NextApiRequest, NextApiResponse } from "next";
 import { hash } from "bcryptjs";
 import { query } from "@/lib/db";
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === "GET") {
-    // جلب بيانات الأدمن الحالية
     try {
       const result = await query("SELECT id, email FROM admin_users LIMIT 1");
       if (!result.rows.length) {
@@ -18,7 +21,6 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "PUT") {
-    // تحديث الإيميل وكلمة السر
     try {
       const { email, password } = req.body;
 
@@ -26,7 +28,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Email is required" });
       }
 
-      // التحقق من وجود الأدمن
       const existingAdmin = await query("SELECT * FROM admin_users LIMIT 1");
       if (!existingAdmin.rows.length) {
         return res.status(404).json({ error: "Admin not found" });
@@ -34,9 +35,8 @@ export default async function handler(req, res) {
 
       const adminId = existingAdmin.rows[0].id;
 
-      // تجهيز الاستعلام
       let updateQuery = "UPDATE admin_users SET email = $1";
-      let values = [email];
+      let values: (string | number)[] = [email];
 
       if (password && password.trim() !== "") {
         const hashedPassword = await hash(password, 12);
