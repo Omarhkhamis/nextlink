@@ -1,63 +1,84 @@
 // app/api/admin/update.ts
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { query } from "@/lib/db";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "GET") {
-    try {
-      const result = await query("SELECT id, email FROM admin_users LIMIT 1");
-      if (!result.rows.length) {
-        return res.status(404).json({ error: "Admin not found" });
-      }
-      return res.status(200).json({ data: result.rows[0] });
-    } catch (error) {
-      console.error("Error fetching admin:", error);
-      return res.status(500).json({ error: "Failed to fetch admin" });
+interface AdminUpdateBody {
+  email?: string;
+  password?: string;
+}
+
+export async function POST(request: Request) {
+  try {
+    const body: AdminUpdateBody = await request.json();
+    const { email, password } = body;
+
+    if (!email && !password) {
+      return NextResponse.json(
+        { error: "Please provide email or password to update." },
+        { status: 400 }
+      );
     }
-  }
 
-  if (req.method === "PUT") {
-    try {
-      const { email, password } = req.body;
+    let updates: string[] = [];
+    let values: any[] = [];
+    let idx = 1;
 
-      if (!email) {
-        return res.status(400).json({ error: "Email is required" });
-      }
-
-      const existingAdmin = await query("SELECT * FROM admin_users LIMIT 1");
-      if (!existingAdmin.rows.length) {
-        return res.status(404).json({ error: "Admin not found" });
-      }
-
-      const adminId = existingAdmin.rows[0].id;
-
-      let updateQuery = "UPDATE admin_users SET email = $1";
-      let values: (string | number)[] = [email];
-
-      if (password && password.trim() !== "") {
-        const hashedPassword = await hash(password, 12);
-        updateQuery += ", password = $2";
-        values.push(hashedPassword);
-      }
-
-      updateQuery +=
-        " WHERE id = $" + (values.length + 1) + " RETURNING id, email";
-      values.push(adminId);
-
-      const result = await query(updateQuery, values);
-
-      return res
-        .status(200)
-        .json({ message: "Admin updated successfully", data: result.rows[0] });
-    } catch (error) {
-      console.error("Admin update error:", error);
-      return res.status(500).json({ error: "Failed to update admin" });
+    if (email) {
+      updates.push(`email = $${idx++}`);
+      values.push(email);
     }
-  }
 
-  return res.status(405).json({ error: "Method not allowed" });
+    if (password) {
+      const hashed = await hash(password, 12);
+      updates.push(`password = $${idx++}`);
+      values.push(hashed);
+    }
+
+    if (updates.length === 0) {
+      return NextResponse.json(
+        { error: "Nothing to update." },
+        { status: 400 }
+      );
+    }
+
+    const updateQuery = `UPDATE admin_users SET ${updates.join(
+      ", "
+    )} WHERE id = 1 RETURNING id, email`;
+
+    const result = await query(updateQuery, values);
+
+    if (result.rows.length === 0) {
+      return NextResponse.json(
+        { error: "Admin user not found." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: "Admin updated successfully.",
+      admin: result.rows[0],
+    });
+  } catch (error: any) {
+    console.error("Failed to update admin credentials", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to update admin." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    const result = await query(
+      "SELECT id, email FROM admin_users WHERE id = 1"
+    );
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: "Admin not found" }, { status: 404 });
+    }
+    return NextResponse.json({ data: result.rows[0] });
+  } catch (error: any) {
+    console.error("Failed to fetch admin", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
