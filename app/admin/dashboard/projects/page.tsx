@@ -53,10 +53,14 @@ export default function ProjectsPage() {
           body: JSON.stringify(project),
         });
         const result = await response.json();
-        if (result.data) {
+        if (response.ok && result.data) {
           setProjects(
             projects.map((p) => (p.id === editingProject.id ? result.data : p))
           );
+        } else {
+          console.error("Save error:", result?.error || response.statusText);
+          alert(result?.error || "Failed to update project");
+          return;
         }
       } else {
         const response = await fetch("/api/projects", {
@@ -65,14 +69,20 @@ export default function ProjectsPage() {
           body: JSON.stringify(project),
         });
         const result = await response.json();
-        if (result.data) {
-          setProjects([result.data, ...projects]);
+        if (response.ok && result.data) {
+          // Re-fetch to ensure consistency (slug, etc.)
+          await fetchProjects();
+        } else {
+          console.error("Create error:", result?.error || response.statusText);
+          alert(result?.error || "Failed to create project");
+          return;
         }
       }
       setIsModalOpen(false);
       setEditingProject(null);
     } catch (error) {
       console.error("Error saving project:", error);
+      alert("Unexpected error while saving project");
     }
   };
 
