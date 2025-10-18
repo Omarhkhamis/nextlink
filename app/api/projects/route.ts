@@ -41,12 +41,25 @@ export async function POST(request: Request) {
     };
 
     // Compute slug from title
-    const slug = title
+    const baseSlug = title
       .toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, "")
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-");
+    // Ensure uniqueness (append -2, -3, ... if needed)
+    let slug = baseSlug || "project";
+    try {
+      let suffix = 2;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const exists = await query("SELECT 1 FROM projects WHERE slug = $1 LIMIT 1", [slug]);
+        if (!exists.rows.length) break;
+        slug = `${baseSlug}-${suffix++}`;
+      }
+    } catch (_) {
+      // If slug column doesn't exist yet, continue; fallback insert below will handle it
+    }
 
     await query("BEGIN");
 
@@ -57,15 +70,15 @@ export async function POST(request: Request) {
         `INSERT INTO projects (title, description, long_description, location, category, image, slug, created_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
          RETURNING *`,
-        [
-          title,
-          description,
-          long_description ?? null,
-          location,
-          category,
-          image ?? null,
-          slug,
-        ]
+      [
+        title,
+        description,
+        long_description ?? null,
+        location,
+        category,
+        image ?? null,
+        slug,
+      ]
       );
     } catch (e: any) {
       // Fallback if slug column does not exist yet

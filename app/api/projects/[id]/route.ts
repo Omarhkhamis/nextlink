@@ -70,14 +70,32 @@ export async function PUT(
 
     // 1) تحديث المشروع (COALESCE حتى لا نمس الحقول غير المرسلة)
     // If title changes, recompute slug
-    const newSlug = title
-      ? title
-          .toLowerCase()
-          .trim()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/\s+/g, "-")
-          .replace(/-+/g, "-")
-      : null;
+    let newSlug = null as string | null;
+    if (title) {
+      const base = title
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+      let candidate: string | null = base || null;
+      if (candidate) {
+        try {
+          let suffix = 2;
+          while (true) {
+            const exists = await query(
+              `SELECT 1 FROM projects WHERE slug = $1 AND id <> $2 LIMIT 1`,
+              [candidate, params.id]
+            );
+            if (!exists.rows.length) break;
+            candidate = `${base}-${suffix++}`;
+          }
+        } catch (_) {
+          // If slug column doesn't exist, fallback update below will handle
+        }
+      }
+      newSlug = candidate;
+    }
 
     let projectUpdateRes;
     try {
