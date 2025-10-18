@@ -103,10 +103,10 @@ export default function SocialMediaModal({
               value={formData.platform}
               onValueChange={handlePlatformChange}
             >
-              <SelectTrigger className="bg-white/5 border-white/10">
-                <SelectValue placeholder="Select platform" />
+              <SelectTrigger className="bg-white text-gray-900 border-gray-200 dark:bg-white/5 dark:text-white dark:border-white/10">
+                <SelectValue placeholder="Select platform"/>
               </SelectTrigger>
-              <SelectContent className="bg-gray-900 border-white/10">
+              <SelectContent className="bg-white text-gray-900 border-gray-200 dark:bg-gray-900 dark:text-white dark:border-white/10">
                 {socialPlatforms.map((platform) => (
                   <SelectItem key={platform.name} value={platform.name}>
                     {platform.name}

@@ -98,10 +98,10 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
               value={formData.icon}
               onValueChange={(value) => setFormData({ ...formData, icon: value })}
             >
-              <SelectTrigger className="bg-white/5 border-white/10 text-white">
-                <SelectValue />
+              <SelectTrigger className="bg-white text-gray-900 border-gray-200 dark:bg-white/5 dark:text-white dark:border-white/10">
+                <SelectValue/>
               </SelectTrigger>
-              <SelectContent className="bg-gray-900 border-white/10">
+              <SelectContent className="bg-white text-gray-900 border-gray-200 dark:bg-gray-900 dark:text-white dark:border-white/10">
                 {iconOptions.map((icon) => (
                   <SelectItem key={icon} value={icon}>{icon}</SelectItem>
                 ))}
