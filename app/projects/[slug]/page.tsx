@@ -120,7 +120,6 @@ export default function ProjectDetailBySlugPage() {
         <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">{project.title}</h1>
         <div className="flex flex-wrap items-center gap-4 text-gray-300 mb-6">
           <div className="flex items-center gap-2"><MapPin className="h-5 w-5 text-brand-blue" /><span>{project.location}</span></div>
-          <div className="flex items-center gap-2"><Calendar className="h-5 w-5 text-brand-blue" /><span>{new Date(project.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</span></div>
         </div>
         {hasImages && (
           <div className="relative mb-10 select-none touch-pan-y">
