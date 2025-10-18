@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { MapPin, Calendar, ArrowLeft, Tag, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, Calendar, ArrowLeft, Tag, Images, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -80,13 +80,22 @@ export default function ProjectDetailPage() {
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const hasImages = allImages.length > 0 && !!allImages[0];
 
   const openAt = (idx: number) => {
+    if (!hasImages) return;
+    if (idx < 0 || idx >= allImages.length) return;
     setLightboxIndex(idx);
     setLightboxOpen(true);
   };
-  const next = () => setLightboxIndex((i) => (i + 1) % allImages.length);
-  const prev = () => setLightboxIndex((i) => (i - 1 + allImages.length) % allImages.length);
+  const next = () => {
+    if (allImages.length <= 1) return;
+    setLightboxIndex((i) => (i + 1) % allImages.length);
+  };
+  const prev = () => {
+    if (allImages.length <= 1) return;
+    setLightboxIndex((i) => (i - 1 + allImages.length) % allImages.length);
+  };
 
   return (
     <div className="min-h-screen bg-black pt-16 md:pt-20">
@@ -151,6 +160,7 @@ export default function ProjectDetailPage() {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Top Image Mosaic */}
+        {hasImages && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
           <div
             className="md:col-span-2 relative group cursor-pointer"
@@ -185,6 +195,7 @@ export default function ProjectDetailPage() {
             ))}
           </div>
         </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-8">
@@ -300,7 +311,7 @@ export default function ProjectDetailPage() {
           <div className="relative w-full h-full flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={allImages[lightboxIndex]}
+              src={allImages[lightboxIndex] || ""}
               alt={project.title}
               className="max-h-full max-w-full object-contain"
             />
