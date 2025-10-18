@@ -1,8 +1,49 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const url = new URL(request.url);
+    const slugParam = url.searchParams.get('slug');
+
+    if (slugParam) {
+      // Try exact slug column first, then fallback to computed slug
+      let projectRes: any;
+      try {
+        projectRes = await query(`SELECT * FROM projects WHERE slug = $1 LIMIT 1`, [slugParam]);
+      } catch (_) {
+        projectRes = { rows: [] };
+      }
+      if (!projectRes.rows?.length) {
+        projectRes = await query(
+          `WITH p AS (
+             SELECT *,
+               lower(
+                 regexp_replace(
+                   regexp_replace(title, '[^\\w\\s-]', '', 'g'),
+                   '\\s+', '-', 'g'
+                 )
+               ) AS computed_slug
+             FROM projects
+           )
+           SELECT * FROM p WHERE regexp_replace(computed_slug, '-+', '-', 'g') = $1
+           LIMIT 1`,
+          [slugParam]
+        );
+      }
+
+      if (!projectRes.rows?.length) {
+        return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+      }
+
+      const project = projectRes.rows[0];
+      const imagesRes = await query(
+        `SELECT id, url, alt, position FROM project_images WHERE project_id = $1 ORDER BY position ASC, id ASC`,
+        [project.id]
+      );
+      return NextResponse.json({ data: { ...project, images: imagesRes.rows } }, { status: 200 });
+    }
+
     const result = await query(
       "SELECT * FROM projects ORDER BY created_at DESC"
     );

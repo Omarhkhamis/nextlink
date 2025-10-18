@@ -35,7 +35,7 @@ export default function ProjectDetailBySlugPage() {
     const fetchProject = async () => {
       if (!params?.slug) return;
       try {
-        const response = await fetch(`/api/projects/slug/${params.slug}`);
+        const response = await fetch(`/api/projects?slug=${params.slug}`);
         if (response.ok) {
           const result = await response.json();
           setProject(result.data as Project);
@@ -168,4 +168,3 @@ export default function ProjectDetailBySlugPage() {
     </div>
   );
 }
-
