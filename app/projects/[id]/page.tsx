@@ -62,7 +62,7 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black pt-20 md:pt-24">
       <div className="relative h-[500px] w-full overflow-hidden">
         {project.image ? (
           <img
