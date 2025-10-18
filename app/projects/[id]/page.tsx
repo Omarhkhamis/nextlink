@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { MapPin, Calendar, ArrowLeft, Tag, Images, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, Calendar, ArrowLeft, Tag, Images, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+// Modal removed per request
 
 interface ProjectImage {
   id: number;
@@ -40,24 +40,54 @@ export default function ProjectDetailPage() {
     return cover ? [cover, ...distinct] : distinct;
   }, [project?.image, project?.images]);
 
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
   const hasImages = allImages.length > 0 && !!allImages[0];
-
-  const openAt = (idx: number) => {
-    if (!hasImages) return;
-    if (idx < 0 || idx >= allImages.length) return;
-    setLightboxIndex(idx);
-    setLightboxOpen(true);
-  };
+  const [startIndex, setStartIndex] = useState(0);
   const next = () => {
-    if (allImages.length <= 1) return;
-    setLightboxIndex((i) => (i + 1) % allImages.length);
+    if (allImages.length > 3) setStartIndex((i) => (i + 1) % allImages.length);
   };
   const prev = () => {
-    if (allImages.length <= 1) return;
-    setLightboxIndex((i) => (i - 1 + allImages.length) % allImages.length);
+    if (allImages.length > 3)
+      setStartIndex((i) => (i - 1 + allImages.length) % allImages.length);
   };
+  // Drag/swipe handling (mouse + touch via Pointer Events)
+  const drag = useRef<{ active: boolean; startX: number; moved: boolean }>({
+    active: false,
+    startX: 0,
+    moved: false,
+  });
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (allImages.length <= 3) return;
+    drag.current.active = true;
+    drag.current.startX = e.clientX;
+    drag.current.moved = false;
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag.current.active) return;
+    const dx = e.clientX - drag.current.startX;
+    const threshold = 50;
+    if (Math.abs(dx) > threshold) {
+      drag.current.moved = true;
+      if (dx < 0) next();
+      else prev();
+      drag.current.active = false;
+      (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+    }
+  };
+  const onPointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    drag.current.active = false;
+    drag.current.moved = false;
+    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+  };
+  const visibleImages = useMemo(() => {
+    if (!hasImages) return [] as string[];
+    const len = allImages.length;
+    const items: string[] = [];
+    items.push(allImages[startIndex]);
+    if (len > 1) items.push(allImages[(startIndex + 1) % len]);
+    if (len > 2) items.push(allImages[(startIndex + 2) % len]);
+    return items;
+  }, [allImages, startIndex, hasImages]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -161,42 +191,59 @@ export default function ProjectDetailPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Top Image Mosaic */}
+        {/* Top Image Mosaic with slider (no modal) */}
         {hasImages && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
           <div
-            className="md:col-span-2 relative group cursor-pointer"
-            onClick={() => openAt(0)}
+            className="relative mb-10 select-none touch-pan-y cursor-grab active:cursor-grabbing"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerEnd}
+            onPointerCancel={onPointerEnd}
+            onPointerLeave={onPointerEnd}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={allImages[0]}
-              alt={project.title}
-              className="w-full h-[360px] md:h-[480px] object-cover rounded border border-white/10"
-            />
-          </div>
-          <div className="flex md:block flex-row gap-3 md:gap-0">
-            {allImages.slice(1, 3).map((src, i) => (
-              <div
-                key={`side-${i}`}
-                className="relative group cursor-pointer flex-1"
-                onClick={() => openAt(i + 1)}
-              >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="md:col-span-2 relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={src}
+                  src={visibleImages[0]}
                   alt={project.title}
-                  className="w-full h-[177px] md:h-[236px] object-cover rounded border border-white/10"
+                  className="w-full h-[360px] md:h-[480px] object-cover rounded border border-white/10"
                 />
-                {i === 1 && allImages.length > 3 && (
-                  <div className="absolute inset-0 bg-black/50 rounded flex items-center justify-center">
-                    <span className="text-white font-semibold text-lg">+{allImages.length - 3}</span>
-                  </div>
-                )}
               </div>
-            ))}
+              <div className="flex md:block flex-row gap-3 md:gap-0">
+                {visibleImages.slice(1).map((src, i) => (
+                  <div key={`side-${i}`} className="relative flex-1">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={src}
+                      alt={project.title}
+                      className="w-full h-[177px] md:h-[236px] object-cover rounded border border-white/10"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {allImages.length > 3 && (
+              <>
+                <button
+                  type="button"
+                  onClick={prev}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 md:p-3 border border-white/10 shadow-md"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={next}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 md:p-3 border border-white/10 shadow-md"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
           </div>
-        </div>
         )}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column */}
@@ -295,45 +342,7 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="bg-black/90 border-white/10 rounded-xl overflow-hidden backdrop-blur-sm shadow-2xl w-[95vw] sm:max-w-3xl md:max-w-5xl h-[85vh] p-0">
-          <div className="relative w-full h-full flex items-center justify-center p-3 sm:p-5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={allImages[lightboxIndex] || ""}
-              alt={project.title}
-              className="max-h-full max-w-full w-auto h-auto object-contain rounded-lg shadow-lg"
-            />
-            {/* Counter */}
-            {hasImages && (
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] sm:text-xs text-white/80 bg-black/40 border border-white/10 px-2 py-0.5 rounded-full">
-                {lightboxIndex + 1} / {allImages.length}
-              </div>
-            )}
-            {allImages.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  onClick={prev}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 md:p-3 border border-white/10 shadow-md"
-                  aria-label="Previous"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-                <button
-                  type="button"
-                  onClick={next}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 md:p-3 border border-white/10 shadow-md"
-                  aria-label="Next"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </button>
-              </>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Modal removed */}
     </div>
   );
 }
