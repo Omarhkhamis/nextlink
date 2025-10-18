@@ -30,6 +30,13 @@ export default function ProjectDetailBySlugPage() {
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const slugify = (s: string) =>
+    s
+      ?.toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -38,7 +45,14 @@ export default function ProjectDetailBySlugPage() {
         const response = await fetch(`/api/projects?slug=${params.slug}`, { cache: 'no-store' });
         if (response.ok) {
           const result = await response.json();
-          setProject(result.data as Project);
+          const data = result.data;
+          const found: Project | null = Array.isArray(data)
+            ? (data as Project[]).find(
+                (p) => (p as any).slug === params.slug || slugify(p.title) === params.slug
+              ) || null
+            : (data as Project);
+          if (found) setProject(found);
+          else router.push("/projects");
         } else {
           router.push("/projects");
         }
