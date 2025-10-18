@@ -269,19 +269,7 @@ export default function ProjectDetailPage() {
                     <p className="text-gray-400 text-sm mb-1">Location</p>
                     <p className="text-white font-medium">{project.location}</p>
                   </div>
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-gray-400 text-sm mb-1">Date Added</p>
-                    <p className="text-white font-medium">
-                      {new Date(project.created_at).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        }
-                      )}
-                    </p>
-                  </div>
+                  
                 </div>
               </CardContent>
             </Card>
@@ -309,22 +297,14 @@ export default function ProjectDetailPage() {
 
       {/* Lightbox Modal */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="bg-black/90 border-white/10 max-w-5xl w-full h-[80vh] p-0">
-          <div className="relative w-full h-full flex items-center justify-center">
+        <DialogContent className="bg-black/90 border-white/10 w-[95vw] max-w-5xl h-[85vh] p-0">
+          <div className="relative w-full h-full flex items-center justify-center px-4 sm:px-6 py-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={allImages[lightboxIndex] || ""}
               alt={project.title}
-              className="max-h-full max-w-full object-contain"
+              className="max-h-full max-w-full w-auto h-auto object-contain"
             />
-            <button
-              type="button"
-              onClick={() => setLightboxOpen(false)}
-              className="absolute top-3 right-3 bg-white/10 hover:bg-white/20 text-white rounded p-2"
-              aria-label="Close"
-            >
-              <X className="h-5 w-5" />
-            </button>
             {allImages.length > 1 && (
               <>
                 <button
