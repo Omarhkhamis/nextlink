@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { MapPin, Calendar, ArrowLeft, Tag, Images, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, Calendar, ArrowLeft, Tag, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -219,12 +219,12 @@ export default function ProjectDetailPage() {
               <Card className="bg-white/5 border-white/10">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-2 mb-4">
-                    <Images className="h-5 w-5 text-brand-blue" />
+                    <Tag className="h-5 w-5 text-brand-blue" />
                     <h2 className="text-2xl font-bold text-white">Gallery</h2>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {project.images.map((img) => (
+                    {(project?.images ?? []).map((img) => (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         key={img.id}
