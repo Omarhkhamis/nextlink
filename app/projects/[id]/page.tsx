@@ -32,6 +32,33 @@ export default function ProjectDetailPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Hooks must not be conditional: compute image list and lightbox state up-front
+  const allImages = useMemo(() => {
+    const cover = project?.image || "";
+    const gallery = (project?.images ?? []).map((i) => i.url).filter(Boolean) as string[];
+    const distinct = gallery.filter((u) => u && u !== cover);
+    return cover ? [cover, ...distinct] : distinct;
+  }, [project?.image, project?.images]);
+
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const hasImages = allImages.length > 0 && !!allImages[0];
+
+  const openAt = (idx: number) => {
+    if (!hasImages) return;
+    if (idx < 0 || idx >= allImages.length) return;
+    setLightboxIndex(idx);
+    setLightboxOpen(true);
+  };
+  const next = () => {
+    if (allImages.length <= 1) return;
+    setLightboxIndex((i) => (i + 1) % allImages.length);
+  };
+  const prev = () => {
+    if (allImages.length <= 1) return;
+    setLightboxIndex((i) => (i - 1 + allImages.length) % allImages.length);
+  };
+
   useEffect(() => {
     const fetchProject = async () => {
       if (!params?.id) return;
@@ -70,32 +97,7 @@ export default function ProjectDetailPage() {
     );
   }
 
-  // Build unified images array: cover + distinct gallery
-  const allImages = useMemo(() => {
-    const cover = project.image;
-    const gallery = (project.images || []).map((i) => i.url);
-    const distinct = gallery.filter((u) => u && u !== cover);
-    return [cover, ...distinct];
-  }, [project.image, project.images]);
-
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-  const hasImages = allImages.length > 0 && !!allImages[0];
-
-  const openAt = (idx: number) => {
-    if (!hasImages) return;
-    if (idx < 0 || idx >= allImages.length) return;
-    setLightboxIndex(idx);
-    setLightboxOpen(true);
-  };
-  const next = () => {
-    if (allImages.length <= 1) return;
-    setLightboxIndex((i) => (i + 1) % allImages.length);
-  };
-  const prev = () => {
-    if (allImages.length <= 1) return;
-    setLightboxIndex((i) => (i - 1 + allImages.length) % allImages.length);
-  };
+  
 
   return (
     <div className="min-h-screen bg-black pt-16 md:pt-20">
