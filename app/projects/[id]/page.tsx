@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { MapPin, Calendar, ArrowLeft, Tag, Images } from "lucide-react";
+import { MapPin, Calendar, ArrowLeft, Tag, Images, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface ProjectImage {
   id: number;
@@ -69,8 +70,26 @@ export default function ProjectDetailPage() {
     );
   }
 
+  // Build unified images array: cover + distinct gallery
+  const allImages = useMemo(() => {
+    const cover = project.image;
+    const gallery = (project.images || []).map((i) => i.url);
+    const distinct = gallery.filter((u) => u && u !== cover);
+    return [cover, ...distinct];
+  }, [project.image, project.images]);
+
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const openAt = (idx: number) => {
+    setLightboxIndex(idx);
+    setLightboxOpen(true);
+  };
+  const next = () => setLightboxIndex((i) => (i + 1) % allImages.length);
+  const prev = () => setLightboxIndex((i) => (i - 1 + allImages.length) % allImages.length);
+
   return (
-    <div className="min-h-screen bg-black pt-20 md:pt-24">
+    <div className="min-h-screen bg-black pt-16 md:pt-20">
       {/* Hero */}
       <div className="relative h-[500px] w-full overflow-hidden">
         {project.image ? (
@@ -130,7 +149,42 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Top Image Mosaic */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
+          <div
+            className="md:col-span-2 relative group cursor-pointer"
+            onClick={() => openAt(0)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={allImages[0]}
+              alt={project.title}
+              className="w-full h-[360px] md:h-[480px] object-cover rounded border border-white/10"
+            />
+          </div>
+          <div className="flex md:block flex-row gap-3 md:gap-0">
+            {allImages.slice(1, 3).map((src, i) => (
+              <div
+                key={`side-${i}`}
+                className="relative group cursor-pointer flex-1"
+                onClick={() => openAt(i + 1)}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt={project.title}
+                  className="w-full h-[177px] md:h-[236px] object-cover rounded border border-white/10"
+                />
+                {i === 1 && allImages.length > 3 && (
+                  <div className="absolute inset-0 bg-black/50 rounded flex items-center justify-center">
+                    <span className="text-white font-semibold text-lg">+{allImages.length - 3}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-8">
@@ -161,7 +215,7 @@ export default function ProjectDetailPage() {
             )}
 
             {/* ✅ Gallery */}
-            {project.images && project.images.length > 0 && (
+            {project.images && project.images.length > 0 && false && (
               <Card className="bg-white/5 border-white/10">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-2 mb-4">
@@ -239,6 +293,48 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="bg-black/90 border-white/10 max-w-5xl w-full h-[80vh] p-0">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={allImages[lightboxIndex]}
+              alt={project.title}
+              className="max-h-full max-w-full object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => setLightboxOpen(false)}
+              className="absolute top-3 right-3 bg-white/10 hover:bg-white/20 text-white rounded p-2"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            {allImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={prev}
+                  className="absolute left-3 bg-white/10 hover:bg-white/20 text-white rounded p-2"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={next}
+                  className="absolute right-3 bg-white/10 hover:bg-white/20 text-white rounded p-2"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
