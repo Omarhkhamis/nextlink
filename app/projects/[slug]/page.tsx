@@ -38,6 +38,32 @@ export default function ProjectDetailBySlugPage() {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-");
 
+  // Hooks must be declared unconditionally (before any early returns)
+  const allImages = useMemo(() => {
+    const cover = project?.image || "";
+    const gallery = (project?.images ?? []).map((i) => i.url).filter(Boolean) as string[];
+    const distinct = gallery.filter((u) => u && u !== cover);
+    return cover ? [cover, ...distinct] : distinct;
+  }, [project?.image, project?.images]);
+
+  const hasImages = allImages.length > 0 && !!allImages[0];
+  const [startIndex, setStartIndex] = useState(0);
+  const next = () => {
+    if (allImages.length > 3) setStartIndex((i) => (i + 1) % allImages.length);
+  };
+  const prev = () => {
+    if (allImages.length > 3) setStartIndex((i) => (i - 1 + allImages.length) % allImages.length);
+  };
+  const visibleImages = useMemo(() => {
+    if (!hasImages) return [] as string[];
+    const len = allImages.length;
+    const items: string[] = [];
+    items.push(allImages[startIndex]);
+    if (len > 1) items.push(allImages[(startIndex + 1) % len]);
+    if (len > 2) items.push(allImages[(startIndex + 2) % len]);
+    return items;
+  }, [allImages, startIndex, hasImages]);
+
   useEffect(() => {
     const fetchProject = async () => {
       if (!params?.slug) return;
@@ -81,30 +107,7 @@ export default function ProjectDetailBySlugPage() {
     );
   }
 
-  const allImages = useMemo(() => {
-    const cover = project?.image || "";
-    const gallery = (project?.images ?? []).map((i) => i.url).filter(Boolean) as string[];
-    const distinct = gallery.filter((u) => u && u !== cover);
-    return cover ? [cover, ...distinct] : distinct;
-  }, [project?.image, project?.images]);
-
-  const hasImages = allImages.length > 0 && !!allImages[0];
-  const [startIndex, setStartIndex] = useState(0);
-  const next = () => {
-    if (allImages.length > 3) setStartIndex((i) => (i + 1) % allImages.length);
-  };
-  const prev = () => {
-    if (allImages.length > 3) setStartIndex((i) => (i - 1 + allImages.length) % allImages.length);
-  };
-  const visibleImages = useMemo(() => {
-    if (!hasImages) return [] as string[];
-    const len = allImages.length;
-    const items: string[] = [];
-    items.push(allImages[startIndex]);
-    if (len > 1) items.push(allImages[(startIndex + 1) % len]);
-    if (len > 2) items.push(allImages[(startIndex + 2) % len]);
-    return items;
-  }, [allImages, startIndex, hasImages]);
+  // Note: Hooks above ensure consistent order across renders
 
   return (
     <div className="min-h-screen bg-black pt-16 md:pt-20">
