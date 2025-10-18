@@ -161,7 +161,7 @@ export default function ProjectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 border-white/10 text-white max-w-3xl">
+      <DialogContent className="bg-gray-900 border-white/10 text-white max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {project ? "Edit Project" : "Add New Project"}

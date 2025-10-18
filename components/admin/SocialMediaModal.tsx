@@ -90,7 +90,7 @@ export default function SocialMediaModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 text-white border-white/10">
+      <DialogContent className="bg-gray-900 text-white border-white/10 max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {socialMedia ? 'Edit Social Media' : 'Add Social Media'}
