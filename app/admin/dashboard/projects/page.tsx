@@ -40,7 +40,11 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  const handleSave = async (project: Omit<Project, "id">) => {
+  const handleSave = async (
+    project: Omit<Project, "id"> & {
+      gallery?: { url: string; alt?: string }[];
+    }
+  ) => {
     try {
       if (editingProject) {
         const response = await fetch(`/api/projects/${editingProject.id}`, {
@@ -72,9 +76,25 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleEdit = (project: Project) => {
-    setEditingProject(project);
-    setIsModalOpen(true);
+  const handleEdit = async (project: Project) => {
+    try {
+      // Fetch full project details including gallery images
+      const res = await fetch(`/api/projects/${project.id}`);
+      if (res.ok) {
+        const result = await res.json();
+        if (result.data) {
+          setEditingProject(result.data);
+          setIsModalOpen(true);
+          return;
+        }
+      }
+      // Fallback: open with basic project data if detail fetch fails
+      setEditingProject(project);
+      setIsModalOpen(true);
+    } catch (e) {
+      setEditingProject(project);
+      setIsModalOpen(true);
+    }
   };
 
   const handleDelete = async (id: number) => {
