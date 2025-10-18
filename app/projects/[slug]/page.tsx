@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { MapPin, Calendar, ArrowLeft, Tag, Images, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,14 +38,11 @@ export default function ProjectDetailBySlugPage() {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-");
 
-  // Hooks must be declared unconditionally (before any early returns)
-  const allImages = useMemo(() => {
-    const cover = project?.image || "";
-    const gallery = (project?.images ?? []).map((i) => i.url).filter(Boolean) as string[];
-    const distinct = gallery.filter((u) => u && u !== cover);
-    return cover ? [cover, ...distinct] : distinct;
-  }, [project?.image, project?.images]);
-
+  // Build images list (no hooks to avoid hook order issues)
+  const cover = project?.image || "";
+  const gallery = (project?.images ?? []).map((i) => i.url).filter(Boolean) as string[];
+  const distinct = gallery.filter((u) => u && u !== cover);
+  const allImages = cover ? [cover, ...distinct] : distinct;
   const hasImages = allImages.length > 0 && !!allImages[0];
   const [startIndex, setStartIndex] = useState(0);
   const next = () => {
@@ -54,7 +51,7 @@ export default function ProjectDetailBySlugPage() {
   const prev = () => {
     if (allImages.length > 3) setStartIndex((i) => (i - 1 + allImages.length) % allImages.length);
   };
-  const visibleImages = useMemo(() => {
+  const visibleImages = (() => {
     if (!hasImages) return [] as string[];
     const len = allImages.length;
     const items: string[] = [];
@@ -62,7 +59,7 @@ export default function ProjectDetailBySlugPage() {
     if (len > 1) items.push(allImages[(startIndex + 1) % len]);
     if (len > 2) items.push(allImages[(startIndex + 2) % len]);
     return items;
-  }, [allImages, startIndex, hasImages]);
+  })();
 
   useEffect(() => {
     const fetchProject = async () => {
