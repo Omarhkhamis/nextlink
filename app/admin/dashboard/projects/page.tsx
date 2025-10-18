@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import ProjectsTable from '@/components/admin/ProjectsTable';
-import ProjectModal from '@/components/admin/ProjectModal';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import ProjectsTable from "@/components/admin/ProjectsTable";
+import ProjectModal from "@/components/admin/ProjectModal";
 
 export interface Project {
   id: number;
   title: string;
   description: string;
+  long_description?: string;
   location: string;
   category: string;
   image: string;
@@ -23,13 +24,13 @@ export default function ProjectsPage() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('/api/projects');
+      const response = await fetch("/api/projects");
       const result = await response.json();
       if (result.data) {
         setProjects(result.data);
       }
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.error("Error fetching projects:", error);
     } finally {
       setLoading(false);
     }
@@ -39,22 +40,24 @@ export default function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  const handleSave = async (project: Omit<Project, 'id'>) => {
+  const handleSave = async (project: Omit<Project, "id">) => {
     try {
       if (editingProject) {
         const response = await fetch(`/api/projects/${editingProject.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(project),
         });
         const result = await response.json();
         if (result.data) {
-          setProjects(projects.map(p => p.id === editingProject.id ? result.data : p));
+          setProjects(
+            projects.map((p) => (p.id === editingProject.id ? result.data : p))
+          );
         }
       } else {
-        const response = await fetch('/api/projects', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(project),
         });
         const result = await response.json();
@@ -65,7 +68,7 @@ export default function ProjectsPage() {
       setIsModalOpen(false);
       setEditingProject(null);
     } catch (error) {
-      console.error('Error saving project:', error);
+      console.error("Error saving project:", error);
     }
   };
 
@@ -76,10 +79,10 @@ export default function ProjectsPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await fetch(`/api/projects/${id}`, { method: 'DELETE' });
-      setProjects(projects.filter(p => p.id !== id));
+      await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      setProjects(projects.filter((p) => p.id !== id));
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error("Error deleting project:", error);
     }
   };
 

@@ -1,9 +1,17 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { Target, Eye, Award, Users, Clock, TrendingUp, ArrowRight } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import {
+  Target,
+  Eye,
+  Award,
+  Users,
+  Clock,
+  TrendingUp,
+  ArrowRight,
+} from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface TeamMember {
   id: number;
@@ -20,13 +28,13 @@ export default function About() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const response = await fetch('/api/team');
+        const response = await fetch("/api/team");
         const result = await response.json();
         if (result.data) {
           setTeam(result.data);
         }
       } catch (error) {
-        console.error('Error fetching team:', error);
+        console.error("Error fetching team:", error);
       } finally {
         setLoading(false);
       }
@@ -38,29 +46,29 @@ export default function About() {
   const values = [
     {
       icon: Target,
-      title: 'Mission',
+      title: "Mission",
       description:
-        'To revolutionize modern living by making NextLink technology accessible, reliable, and intuitive for everyone.',
+        "To revolutionize modern living by making NextLink technology accessible, reliable, and intuitive for everyone.",
     },
     {
       icon: Eye,
-      title: 'Vision',
+      title: "Vision",
       description:
-        'A world where every home intelligently adapts to its inhabitants, creating perfect comfort, security, and efficiency.',
+        "A world where every home intelligently adapts to its inhabitants, creating perfect comfort, security, and efficiency.",
     },
     {
       icon: Award,
-      title: 'Excellence',
+      title: "Excellence",
       description:
-        'We deliver premium solutions with meticulous attention to detail, ensuring the highest standards in every project.',
+        "We deliver premium solutions with meticulous attention to detail, ensuring the highest standards in every project.",
     },
   ];
 
   const achievements = [
-    { number: '10+', label: 'Years of Experience' },
-    { number: '500+', label: 'Projects Completed' },
-    { number: '98%', label: 'Client Satisfaction' },
-    { number: '50+', label: 'Industry Awards' },
+    { number: "10+", label: "Years of Experience" },
+    { number: "500+", label: "Projects Completed" },
+    { number: "98%", label: "Client Satisfaction" },
+    { number: "50+", label: "Industry Awards" },
   ];
 
   return (
@@ -74,8 +82,8 @@ export default function About() {
               About <span className="text-brand-blue">NextLink</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              We're passionate about transforming houses into intelligent living spaces that enhance
-              your lifestyle, security, and comfort.
+              We're passionate about transforming houses into intelligent living
+              spaces that enhance your lifestyle, security, and comfort.
             </p>
           </div>
         </div>
@@ -90,19 +98,21 @@ export default function About() {
               </h2>
               <div className="space-y-4 text-gray-300 leading-relaxed">
                 <p>
-                  Founded in 2014, NextLink began with a simple vision: to make advanced home
-                  automation technology accessible to everyone. What started as a small team of
-                  passionate engineers has grown into a leading provider of intelligent home solutions.
+                  NextLink began with a simple vision: to make advanced home
+                  automation technology accessible to everyone. What started as
+                  a small team of passionate engineers has grown into a leading
+                  provider of intelligent home solutions.
                 </p>
                 <p>
-                  Over the past decade, we've completed over 500 projects, helping families and
-                  businesses create spaces that are not just smart, but truly intelligent. Our systems
-                  learn, adapt, and evolve with your lifestyle.
+                  Over the past decade, we've completed over 500 projects,
+                  helping families and businesses create spaces that are not
+                  just smart, but truly intelligent. Our systems learn, adapt,
+                  and evolve with your lifestyle.
                 </p>
                 <p>
-                  Today, we pride ourselves on being at the forefront of home automation technology,
-                  offering cutting-edge solutions backed by exceptional customer service and technical
-                  support.
+                  Today, we pride ourselves on being at the forefront of home
+                  automation technology, offering cutting-edge solutions backed
+                  by exceptional customer service and technical support.
                 </p>
               </div>
             </div>
@@ -114,7 +124,9 @@ export default function About() {
                     key={index}
                     className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 text-center hover:bg-white/10 transition-all hover:border-brand-blue/50"
                   >
-                    <div className="text-4xl font-bold text-brand-blue mb-2">{stat.number}</div>
+                    <div className="text-4xl font-bold text-brand-blue mb-2">
+                      {stat.number}
+                    </div>
                     <div className="text-gray-300 text-sm">{stat.label}</div>
                   </div>
                 ))}
@@ -134,8 +146,12 @@ export default function About() {
                     <value.icon className="h-8 w-8 text-brand-blue" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">{value.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{value.description}</p>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  {value.title}
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  {value.description}
+                </p>
               </div>
             ))}
           </div>
@@ -149,7 +165,8 @@ export default function About() {
               Meet Our <span className="text-brand-blue">Team</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Experienced professionals dedicated to bringing your NextLink vision to life
+              Experienced professionals dedicated to bringing your NextLink
+              vision to life
             </p>
           </div>
 
@@ -167,15 +184,25 @@ export default function About() {
                 >
                   <div className="h-64 bg-gradient-to-br from-brand-blue/20 to-brand-green/20 flex items-center justify-center overflow-hidden">
                     {member.image ? (
-                      <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <Users className="h-24 w-24 text-white/20" />
                     )}
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
-                    <p className="text-brand-blue text-sm font-semibold mb-3">{member.position}</p>
-                    <p className="text-gray-400 text-sm leading-relaxed">{member.bio}</p>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      {member.name}
+                    </h3>
+                    <p className="text-brand-blue text-sm font-semibold mb-3">
+                      {member.position}
+                    </p>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      {member.bio}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -191,7 +218,8 @@ export default function About() {
               Why Choose <span className="text-brand-green">Us</span>?
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              We combine expertise, innovation, and exceptional service to deliver unmatched results
+              We combine expertise, innovation, and exceptional service to
+              deliver unmatched results
             </p>
           </div>
 
@@ -199,18 +227,20 @@ export default function About() {
             {[
               {
                 icon: Clock,
-                title: 'Fast Response Time',
-                description: '24/7 support with average response time under 2 hours',
+                title: "Fast Response Time",
+                description:
+                  "24/7 support with average response time under 2 hours",
               },
               {
                 icon: Award,
-                title: 'Certified Experts',
-                description: 'All technicians are certified and continuously trained',
+                title: "Certified Experts",
+                description:
+                  "All technicians are certified and continuously trained",
               },
               {
                 icon: TrendingUp,
-                title: 'Future-Proof Solutions',
-                description: 'Scalable systems that grow with your needs',
+                title: "Future-Proof Solutions",
+                description: "Scalable systems that grow with your needs",
               },
             ].map((feature, index) => (
               <div
@@ -218,8 +248,12 @@ export default function About() {
                 className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 hover:border-brand-blue/50 transition-all hover:shadow-xl hover:shadow-brand-blue/20"
               >
                 <feature.icon className="h-12 w-12 text-brand-green mb-4" />
-                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
