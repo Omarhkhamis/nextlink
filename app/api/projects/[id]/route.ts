@@ -69,27 +69,65 @@ export async function PUT(
     await query("BEGIN");
 
     // 1) تحديث المشروع (COALESCE حتى لا نمس الحقول غير المرسلة)
-    const projectUpdateRes = await query(
-      `UPDATE projects 
-       SET 
-         title            = COALESCE($1, title),
-         description      = COALESCE($2, description),
-         long_description = COALESCE($3, long_description),
-         location         = COALESCE($4, location),
-         category         = COALESCE($5, category),
-         image            = COALESCE($6, image)
-       WHERE id = $7
-       RETURNING *`,
-      [
-        title ?? null,
-        description ?? null,
-        long_description ?? null,
-        location ?? null,
-        category ?? null,
-        image ?? null,
-        params.id,
-      ]
-    );
+    // If title changes, recompute slug
+    const newSlug = title
+      ? title
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+      : null;
+
+    let projectUpdateRes;
+    try {
+      projectUpdateRes = await query(
+        `UPDATE projects 
+         SET 
+           title            = COALESCE($1, title),
+           description      = COALESCE($2, description),
+           long_description = COALESCE($3, long_description),
+           location         = COALESCE($4, location),
+           category         = COALESCE($5, category),
+           image            = COALESCE($6, image),
+           slug             = COALESCE($7, slug)
+         WHERE id = $8
+         RETURNING *`,
+        [
+          title ?? null,
+          description ?? null,
+          long_description ?? null,
+          location ?? null,
+          category ?? null,
+          image ?? null,
+          newSlug,
+          params.id,
+        ]
+      );
+    } catch (e: any) {
+      // Fallback when slug column doesn't exist
+      projectUpdateRes = await query(
+        `UPDATE projects 
+         SET 
+           title            = COALESCE($1, title),
+           description      = COALESCE($2, description),
+           long_description = COALESCE($3, long_description),
+           location         = COALESCE($4, location),
+           category         = COALESCE($5, category),
+           image            = COALESCE($6, image)
+         WHERE id = $7
+         RETURNING *`,
+        [
+          title ?? null,
+          description ?? null,
+          long_description ?? null,
+          location ?? null,
+          category ?? null,
+          image ?? null,
+          params.id,
+        ]
+      );
+    }
 
     if (projectUpdateRes.rows.length === 0) {
       await query("ROLLBACK");

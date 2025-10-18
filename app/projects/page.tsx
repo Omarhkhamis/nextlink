@@ -13,6 +13,7 @@ interface Project {
   location: string;
   category: string;
   image: string;
+  slug?: string;
 }
 
 export default function Projects() {
@@ -42,6 +43,15 @@ export default function Projects() {
 
   const filteredProjects =
     filter === 'all' ? projects : projects.filter((p) => p.category === filter);
+
+  function slugify(s: string) {
+    return s
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
 
   return (
     <main className="pt-20">
@@ -87,7 +97,7 @@ export default function Projects() {
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <ProjectCard {...project} href={`/projects/${project.id}`} />
+                <ProjectCard {...project} href={`/projects/${slugify(project.title)}`} />
               </div>
             ))}
           </div>

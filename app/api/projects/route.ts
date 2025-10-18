@@ -40,22 +40,49 @@ export async function POST(request: Request) {
       gallery?: GalleryItem[] | null;
     };
 
+    // Compute slug from title
+    const slug = title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+
     await query("BEGIN");
 
     // إنشاء المشروع
-    const projectRes = await query(
-      `INSERT INTO projects (title, description, long_description, location, category, image, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW())
-       RETURNING *`,
-      [
-        title,
-        description,
-        long_description ?? null,
-        location,
-        category,
-        image ?? null,
-      ]
-    );
+    let projectRes;
+    try {
+      projectRes = await query(
+        `INSERT INTO projects (title, description, long_description, location, category, image, slug, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+         RETURNING *`,
+        [
+          title,
+          description,
+          long_description ?? null,
+          location,
+          category,
+          image ?? null,
+          slug,
+        ]
+      );
+    } catch (e: any) {
+      // Fallback if slug column does not exist yet
+      projectRes = await query(
+        `INSERT INTO projects (title, description, long_description, location, category, image, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, NOW())
+         RETURNING *`,
+        [
+          title,
+          description,
+          long_description ?? null,
+          location,
+          category,
+          image ?? null,
+        ]
+      );
+    }
 
     const project = projectRes.rows[0];
     const projectId = project.id;
