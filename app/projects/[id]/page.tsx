@@ -2,9 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { MapPin, Calendar, ArrowLeft, Tag } from "lucide-react";
+import { MapPin, Calendar, ArrowLeft, Tag, Images } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+
+interface ProjectImage {
+  id: number;
+  url: string;
+  alt?: string | null;
+  position?: number | null;
+}
 
 interface Project {
   id: number;
@@ -13,8 +20,9 @@ interface Project {
   long_description?: string;
   location: string;
   category: string;
-  image: string;
+  image: string; // صورة الغلاف
   created_at: string;
+  images?: ProjectImage[]; // ✅ المعرض الاختياري
 }
 
 export default function ProjectDetailPage() {
@@ -30,7 +38,7 @@ export default function ProjectDetailPage() {
         const response = await fetch(`/api/projects/${params.id}`);
         if (response.ok) {
           const result = await response.json();
-          setProject(result.data);
+          setProject(result.data as Project);
         } else {
           router.push("/projects");
         }
@@ -63,8 +71,10 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen bg-black pt-20 md:pt-24">
+      {/* Hero */}
       <div className="relative h-[500px] w-full overflow-hidden">
         {project.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={project.image}
             alt={project.title}
@@ -119,9 +129,12 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
+      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left column */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Overview */}
             <Card className="bg-white/5 border-white/10">
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold text-white mb-4">
@@ -133,6 +146,7 @@ export default function ProjectDetailPage() {
               </CardContent>
             </Card>
 
+            {/* Detailed Description */}
             {project.long_description && (
               <Card className="bg-white/5 border-white/10">
                 <CardContent className="p-8">
@@ -145,8 +159,34 @@ export default function ProjectDetailPage() {
                 </CardContent>
               </Card>
             )}
+
+            {/* ✅ Gallery */}
+            {project.images && project.images.length > 0 && (
+              <Card className="bg-white/5 border-white/10">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Images className="h-5 w-5 text-brand-blue" />
+                    <h2 className="text-2xl font-bold text-white">Gallery</h2>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {project.images.map((img) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={img.id}
+                        src={img.url}
+                        alt={img.alt ?? ""}
+                        className="w-full h-40 md:h-48 object-cover rounded border border-white/10"
+                        loading="lazy"
+                      />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
+          {/* Right column */}
           <div className="space-y-6">
             <Card className="bg-white/5 border-white/10">
               <CardContent className="p-6">
