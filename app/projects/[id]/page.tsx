@@ -297,20 +297,26 @@ export default function ProjectDetailPage() {
 
       {/* Lightbox Modal */}
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="bg-black/90 border-white/10 w-[95vw] max-w-5xl h-[85vh] p-0">
-          <div className="relative w-full h-full flex items-center justify-center px-4 sm:px-6 py-4">
+        <DialogContent className="bg-black/90 border-white/10 rounded-xl overflow-hidden backdrop-blur-sm shadow-2xl w-[95vw] sm:max-w-3xl md:max-w-5xl h-[85vh] p-0">
+          <div className="relative w-full h-full flex items-center justify-center p-3 sm:p-5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={allImages[lightboxIndex] || ""}
               alt={project.title}
-              className="max-h-full max-w-full w-auto h-auto object-contain"
+              className="max-h-full max-w-full w-auto h-auto object-contain rounded-lg shadow-lg"
             />
+            {/* Counter */}
+            {hasImages && (
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] sm:text-xs text-white/80 bg-black/40 border border-white/10 px-2 py-0.5 rounded-full">
+                {lightboxIndex + 1} / {allImages.length}
+              </div>
+            )}
             {allImages.length > 1 && (
               <>
                 <button
                   type="button"
                   onClick={prev}
-                  className="absolute left-3 bg-white/10 hover:bg-white/20 text-white rounded p-2"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 md:p-3 border border-white/10 shadow-md"
                   aria-label="Previous"
                 >
                   <ChevronLeft className="h-6 w-6" />
@@ -318,7 +324,7 @@ export default function ProjectDetailPage() {
                 <button
                   type="button"
                   onClick={next}
-                  className="absolute right-3 bg-white/10 hover:bg-white/20 text-white rounded p-2"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 md:p-3 border border-white/10 shadow-md"
                   aria-label="Next"
                 >
                   <ChevronRight className="h-6 w-6" />
