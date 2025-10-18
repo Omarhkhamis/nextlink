@@ -97,7 +97,7 @@ export default function Projects() {
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <ProjectCard {...project} href={`/projects/${slugify(project.title)}`} />
+                <ProjectCard {...project} href={`/projects/${project.slug ?? slugify(project.title)}`} />
               </div>
             ))}
           </div>
