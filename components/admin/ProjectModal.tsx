@@ -239,10 +239,10 @@ export default function ProjectModal({
                   setFormData({ ...formData, category: value })
                 }
               >
-                <SelectTrigger className="bg-white text-gray-900 border-gray-200 dark:bg-white/5 dark:text-white dark:border-white/10">
-                  <SelectValue placeholder="Select a category"/>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue">
+                  <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
-                <SelectContent className="bg-white text-gray-900 border-gray-200 dark:bg-gray-900 dark:text-white dark:border-white/10">
+                <SelectContent className="bg-gray-900 border-white/10 text-white">
                   <SelectItem value="residential">Residential</SelectItem>
                   <SelectItem value="commercial">Commercial</SelectItem>
                   <SelectItem value="luxury">Luxury</SelectItem>

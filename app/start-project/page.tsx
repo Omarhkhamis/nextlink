@@ -191,10 +191,10 @@ export default function StartProject() {
                           value={formData.propertyType}
                           onValueChange={(value) => setFormData({ ...formData, propertyType: value })}
                         >
-                          <SelectTrigger className="bg-white text-gray-900 border-gray-200 dark:bg-white/5 dark:text-white dark:border-white/10">
-                            <SelectValue placeholder="Select property type"/>
+                          <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue">
+                            <SelectValue placeholder="Select property type" />
                           </SelectTrigger>
-                          <SelectContent className="bg-white text-gray-900 border-gray-200 dark:bg-gray-900 dark:text-white dark:border-white/10">
+                          <SelectContent className="bg-gray-900 border-white/10 text-white">
                             <SelectItem value="house">House</SelectItem>
                             <SelectItem value="apartment">Apartment</SelectItem>
                             <SelectItem value="condo">Condo</SelectItem>
@@ -213,10 +213,10 @@ export default function StartProject() {
                           value={formData.propertyStage}
                           onValueChange={(value) => setFormData({ ...formData, propertyStage: value })}
                         >
-                          <SelectTrigger className="bg-white text-gray-900 border-gray-200 dark:bg-white/5 dark:text-white dark:border-white/10">
-                            <SelectValue placeholder="Select stage"/>
+                          <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue">
+                            <SelectValue placeholder="Select stage" />
                           </SelectTrigger>
-                          <SelectContent className="bg-white text-gray-900 border-gray-200 dark:bg-gray-900 dark:text-white dark:border-white/10">
+                          <SelectContent className="bg-gray-900 border-white/10 text-white">
                             <SelectItem value="planning">Planning Phase</SelectItem>
                             <SelectItem value="construction">Under Construction</SelectItem>
                             <SelectItem value="renovation">Renovation</SelectItem>
@@ -234,10 +234,10 @@ export default function StartProject() {
                         value={formData.budget}
                         onValueChange={(value) => setFormData({ ...formData, budget: value })}
                       >
-                        <SelectTrigger className="bg-white text-gray-900 border-gray-200 dark:bg-white/5 dark:text-white dark:border-white/10">
-                          <SelectValue placeholder="Select budget range"/>
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-brand-blue">
+                          <SelectValue placeholder="Select budget range" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white text-gray-900 border-gray-200 dark:bg-gray-900 dark:text-white dark:border-white/10">
+                        <SelectContent className="bg-gray-900 border-white/10 text-white">
                           <SelectItem value="5k-10k">$5,000 - $10,000</SelectItem>
                           <SelectItem value="10k-25k">$10,000 - $25,000</SelectItem>
                           <SelectItem value="25k-50k">$25,000 - $50,000</SelectItem>
