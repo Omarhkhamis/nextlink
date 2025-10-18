@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
+// Ensure this route is always dynamic (no static caching on host)
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -105,27 +108,12 @@ export async function POST(request: Request) {
     await query("BEGIN");
 
     // إنشاء المشروع
+    // Insert with guaranteed slug (do not fallback to NULL slug)
     let projectRes;
     try {
       projectRes = await query(
         `INSERT INTO projects (title, description, long_description, location, category, image, slug, created_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-         RETURNING *`,
-      [
-        title,
-        description,
-        long_description ?? null,
-        location,
-        category,
-        image ?? null,
-        slug,
-      ]
-      );
-    } catch (e: any) {
-      // Fallback if slug column does not exist yet
-      projectRes = await query(
-        `INSERT INTO projects (title, description, long_description, location, category, image, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW())
          RETURNING *`,
         [
           title,
@@ -134,8 +122,30 @@ export async function POST(request: Request) {
           location,
           category,
           image ?? null,
+          slug,
         ]
       );
+    } catch (e: any) {
+      // If unique violation (23505) on slug occurs despite our check, advance suffix and retry
+      if (e?.code === "23505") {
+        let suffix = 2;
+        let retry = null as any;
+        while (!retry) {
+          const nextSlug = `${baseSlug}-${suffix++}`;
+          const exists = await query("SELECT 1 FROM projects WHERE slug = $1 LIMIT 1", [nextSlug]);
+          if (!exists.rows.length) {
+            retry = await query(
+              `INSERT INTO projects (title, description, long_description, location, category, image, slug, created_at)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+               RETURNING *`,
+              [title, description, long_description ?? null, location, category, image ?? null, nextSlug]
+            );
+          }
+        }
+        projectRes = retry;
+      } else {
+        throw e;
+      }
     }
 
     const project = projectRes.rows[0];
