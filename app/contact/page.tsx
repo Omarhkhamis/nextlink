@@ -352,7 +352,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="animate-fade-in">
+          {/* <div className="animate-fade-in">
             <Card className="bg-white/5 backdrop-blur-lg border-white/10 overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-2xl text-white">
@@ -376,7 +376,7 @@ export default function Contact() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
         </div>
       </section>
     </main>
