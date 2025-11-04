@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Menu, X, Home } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import navData from '@/data/navigation.json';
 
@@ -27,8 +27,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="relative">
-              <Home className="h-8 w-8 text-brand-blue group-hover:text-brand-green transition-colors" />
+            <div className="relative h-[50px] w-[50px]">
+              <img
+                src="/logo.svg"
+                alt="Next link logo"
+                className="h-[50px] w-[50px] object-contain"
+              />
               <div className="absolute inset-0 blur-xl bg-brand-blue/20 group-hover:bg-brand-green/20 transition-all" />
             </div>
             <span className="text-2xl font-bold text-white">

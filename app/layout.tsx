@@ -38,7 +38,8 @@ export default function RootLayout({
 
   // ✔️ حدّث/أنشئ عنصر الـ favicon في <head>
   useEffect(() => {
-    const url = faviconUrl || "/favicon.ico";
+    // استخدم شعار الموقع كـ favicon بشكل افتراضي
+    const url = faviconUrl || "/logo.svg";
     let link = document.querySelector(
       "link[rel~='icon']"
     ) as HTMLLinkElement | null;
@@ -64,8 +65,8 @@ export default function RootLayout({
         {/* favicon افتراضي ثم يُستبدل إن وُجد في الإعدادات */}
         <link
           rel="icon"
-          type="image/x-icon"
-          href={faviconUrl || "/favicon.ico"}
+          type="image/svg+xml"
+          href={faviconUrl || "/logo.svg"}
         />
 
         {/* (اختياري) ميتاداتا ثابتة مبسطة */}
