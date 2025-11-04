@@ -22,9 +22,41 @@ export default function StartProject() {
     additionalInfo: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Project form submitted:', formData);
+    setLoading(true);
+    setError('');
+    setSuccess(false);
+    try {
+      const res = await fetch('/api/start-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Failed to send');
+      setSuccess(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        city: '',
+        propertyType: '',
+        propertyStage: '',
+        budget: '',
+        services: [],
+        additionalInfo: '',
+      });
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err: any) {
+      setError(err?.message || 'Failed to send project request. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCheckboxChange = (service: string, checked: boolean) => {
